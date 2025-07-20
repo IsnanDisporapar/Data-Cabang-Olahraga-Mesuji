@@ -1,0 +1,403 @@
+﻿
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Olahraga Kabupaten Mesuji</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <!-- Logo Kiri (Opsional) -->
+                <div class="flex-shrink-0">
+                    <!-- Bisa ditambah logo kiri jika diperlukan -->
+                </div>
+                
+                <!-- Judul Tengah -->
+                <div class="text-center flex-1">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">🏆 Data Olahraga Kabupaten Mesuji</h1>
+                    <p class="text-lg text-gray-600">Informasi lengkap cabang olahraga, atlet, pelatih, dan prestasi di Kabupaten Mesuji</p>
+                </div>
+                
+                
+                    </div>
+                    <p class="text-xs text-center text-gray-600 mt-2 font-medium">Kab. Mesuji</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Statistics Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-blue-600" id="totalSports">10</div>
+                <div class="text-gray-600 mt-1">Cabang Olahraga</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-green-600" id="totalAthletes">295</div>
+                <div class="text-gray-600 mt-1">Total Atlet</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-purple-600" id="totalCoaches">38</div>
+                <div class="text-gray-600 mt-1">Total Pelatih</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-orange-600" id="totalAchievements">30</div>
+                <div class="text-gray-600 mt-1">Total Prestasi</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Cari cabang olahraga..." 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <button onclick="searchSports()" 
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    🔍 Cari
+                </button>
+                <button onclick="resetSearch()" 
+                        class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Sports Data Grid -->
+        <div id="sportsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Sports cards will be generated here -->
+        </div>
+
+        <!-- Detail Modal -->
+        <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 id="modalTitle" class="text-2xl font-bold text-gray-900"></h2>
+                        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div id="modalContent"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sports data for Kabupaten Mesuji - 11 Cabang Olahraga
+        const sportsData = [
+            {
+                name: "Sepak Bola",
+                icon: "⚽",
+                athletes: 45,
+                coaches: 6,
+                athleteNames: ["Ahmad Rizki", "Budi Santoso", "Candra Wijaya", "Dedi Kurniawan", "Eko Prasetyo", "Fajar Nugroho", "Gilang Ramadhan", "Hendra Saputra", "Indra Gunawan", "Joko Susilo"],
+                coachNames: ["👨Suharto", "👩Bu Sari Dewi", "👩Bu Rina", "Pak Agus", "Pak Darmawan"],
+                achievements: ["Juara Liga Kabupaten 2023", "Runner-up Turnamen Antar Kecamatan", "Juara 3 Piala Bupati Mesuji"],
+                description: "Cabang olahraga paling populer di Kabupaten Mesuji dengan banyak klub lokal."
+
+            },
+	    {
+                name: "Judo",
+                icon: "$",
+                athletes: 5,
+                coaches: 6,
+                athleteNames: ["Ahmad Rizki", "Budi Santoso", "Candra Wijaya", "Dedi Kurniawan", "Eko Prasetyo", "Fajar Nugroho", "Gilang Ramadhan", "Hendra Saputra", "Indra Gunawan", "Joko Susilo"],
+                coachNames: ["Pak Suharto", "👩Bu Sari Dewi", "Pak Bambang", "👩Bu Rina", "Pak Agus", "Pak Darmawan"],
+                achievements: ["Juara Liga Kabupaten 2023", "Runner-up Turnamen Antar Kecamatan", "Juara 3 Piala Bupati Mesuji"],
+                description: "Cabang olahraga paling populer di Kabupaten Mesuji dengan banyak klub lokal."
+            },
+            {
+                name: "Badminton",
+                icon: "🏸",
+                athletes: 32,
+                coaches: 4,
+                athleteNames: ["Siti Nurhaliza", "Andi Pratama", "Maya Sari", "Rudi Hartono", "Lina Marlina", "Toni Gunawan", "Dewi Fortuna", "Bayu Setiawan"],
+                coachNames: ["Pak Hendro", "Bu Yuni", "Pak Sutrisno", "Bu Mega"],
+                achievements: ["Juara Kejuaraan Kabupaten 2023", "Medali Emas PORPROV Lampung", "Juara Turnamen Antar Club"],
+                description: "Olahraga unggulan Mesuji dengan prestasi di tingkat provinsi."
+            },
+            {
+                name: "Voli",
+                icon: "🇮🇩",
+                athletes: 28,
+                coaches: 3,
+                athleteNames: ["Rina Sari", "Doni Pratama", "Sari Wulandari", "Eko Susanto", "Fitri Handayani", "Agus Salim"],
+                coachNames: ["Pak Joko", "Bu Ratna", "Pak Wahyu"],
+                achievements: ["Juara Liga Voli Kabupaten", "Medali Perak PORPROV 2022", "Juara Turnamen Kemerdekaan"],
+                description: "Cabang olahraga beregu yang aktif di berbagai kecamatan di Mesuji."
+            },
+            {
+                name: "Atletik",
+                icon: "🏃",
+                athletes: 35,
+                coaches: 5,
+                athleteNames: ["Surya Pratama", "Indah Permata", "Riko Saputra", "Novi Andriani", "Dimas Wijaya", "Sinta Dewi", "Arif Rahman"],
+                coachNames: ["Pak Suryadi", "Bu Lestari", "Pak Gunawan", "Bu Siska", "Pak Hadi"],
+                achievements: ["Rekor Kabupaten Lari 100m", "Juara Lompat Jauh PORPROV", "Medali Emas Lempar Lembing"],
+                description: "Cabang olahraga dengan berbagai nomor yang dikembangkan di Mesuji."
+            },
+            {
+                name: "Tenis Meja",
+                icon: "🎾",
+                athletes: 22,
+                coaches: 3,
+                athleteNames: ["Kevin Pratama", "Sari Melati", "Andi Wijaya", "Lia Sartika", "Budi Setiawan", "Nina Kartika"],
+                coachNames: ["Pak Ridwan", "Bu Yanti", "Pak Sugiarto"],
+                achievements: ["Juara Ganda Putra Kabupaten", "Medali Perunggu PORPROV", "Juara Turnamen Pelajar"],
+                description: "Olahraga indoor yang berkembang pesat di sekolah-sekolah Mesuji."
+            },
+            {
+                name: "Renang",
+                icon: "🏊",
+                athletes: 18,
+                coaches: 2,
+                athleteNames: ["Rizki Maulana", "Putri Ayu", "Dani Kurniawan", "Siska Pratiwi", "Yoga Pratama"],
+                coachNames: ["Pak Edi", "Bu Wati"],
+                achievements: ["Rekor Kabupaten 50m Gaya Bebas", "Juara Kejuaraan Antar Pelajar", "Medali Emas Gaya Kupu-kupu"],
+                description: "Cabang olahraga air yang mulai berkembang dengan fasilitas kolam renang baru."
+            },
+            {
+                name: "Pencak Silat",
+                icon: "🥋",
+                athletes: 40,
+                coaches: 6,
+                athleteNames: ["Reza Pratama", "Siti Khadijah", "Andi Setiawan", "Dewi Sartika", "Bayu Aji", "Rina Marlina", "Doni Kurnia", "Fitri Rahayu"],
+                coachNames: ["Pak Hasan", "Bu Mariam", "Pak Usman", "Bu Fatimah", "Pak Yusuf", "Pak Ismail"],
+                achievements: ["Juara Umum PORPROV Lampung", "Medali Emas Kategori Tanding", "Juara Seni Tunggal Putra"],
+                description: "Seni bela diri tradisional yang menjadi kebanggaan Kabupaten Mesuji."
+            },
+            {
+                name: "Panahan",
+                icon: "🏹",
+                athletes: 15,
+                coaches: 2,
+                athleteNames: ["Arya Pratama", "Sari Indah", "Dedi Gunawan", "Lina Sari", "Eko Wijaya"],
+                coachNames: ["Pak Sutomo", "Bu Endang"],
+                achievements: ["Juara Recurve Kabupaten", "Medali Perak PORPROV", "Rekor Skor Tertinggi Daerah"],
+                description: "Olahraga presisi yang mulai diminati anak muda Mesuji."
+            },
+            {
+                name: "Basket",
+                icon: "🏀",
+                athletes: 24,
+                coaches: 3,
+                athleteNames: ["Randi Pratama", "Sinta Dewi", "Adi Nugroho", "Maya Sari", "Doni Setiawan", "Rika Handayani"],
+                coachNames: ["Pak Budi", "Bu Sari", "Pak Tono"],
+                achievements: ["Runner-up Liga Basket Kabupaten", "Juara 3 Turnamen Pelajar", "Medali Perunggu PORPROV"],
+                description: "Olahraga beregu yang populer di kalangan pelajar dan mahasiswa."
+            },
+            {
+                name: "Futsal",
+                icon: "⚽",
+                athletes: 36,
+                coaches: 4,
+                athleteNames: ["Gilang Ramadhan", "Andi Pratama", "Reza Gunawan", "Doni Setiawan", "Bayu Aji", "Eko Susanto", "Fajar Nugroho"],
+                coachNames: ["Pak Yanto", "Bu Erni", "Pak Dedi", "Pak Rudi"],
+                achievements: ["Juara Liga Futsal Kabupaten", "Runner-up Turnamen Ramadan", "Juara Piala Walikota"],
+                description: "Variasi sepak bola indoor yang sangat digemari masyarakat Mesuji."
+            }
+        ];
+
+        let filteredData = [...sportsData];
+
+        // Initialize the page
+        function init() {
+            renderSportsGrid();
+            updateStatistics();
+        }
+
+        // Render sports grid
+        function renderSportsGrid() {
+            const grid = document.getElementById('sportsGrid');
+            grid.innerHTML = '';
+
+            filteredData.forEach((sport, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow cursor-pointer transform hover:scale-105 transition-transform';
+                card.onclick = () => showDetail(index);
+                
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="text-4xl mr-4">${sport.icon}</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">${sport.name}</h3>
+                                <p class="text-gray-600 text-sm">${sport.description}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">${sport.athletes}</div>
+                                <div class="text-xs text-gray-600">Atlet</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">${sport.coaches}</div>
+                                <div class="text-xs text-gray-600">Pelatih</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-orange-600">${sport.achievements.length}</div>
+                                <div class="text-xs text-gray-600">Prestasi</div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t pt-3">
+                            <div class="text-sm text-gray-600 mb-2">Prestasi Terbaru:</div>
+                            <div class="text-sm font-medium text-gray-800">${sport.achievements[0]}</div>
+                        </div>
+                        
+                        <button class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                            Lihat Detail
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Show detail modal
+        function showDetail(index) {
+            const sport = filteredData[index];
+            const modal = document.getElementById('detailModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.innerHTML = `${sport.icon} ${sport.name}`;
+            
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <p class="text-gray-700 text-lg">${sport.description}</p>
+                    
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold text-blue-600">${sport.athletes}</div>
+                            <div class="text-gray-600 mt-1">Atlet Aktif</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold text-green-600">${sport.coaches}</div>
+                            <div class="text-gray-600 mt-1">Pelatih</div>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold text-orange-600">${sport.achievements.length}</div>
+                            <div class="text-gray-600 mt-1">Prestasi</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-3">🏆 Daftar Prestasi</h4>
+                        <div class="space-y-2">
+                            ${sport.achievements.map(achievement => `
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                                    <div class="text-gray-800 font-medium">${achievement}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3">👥 Daftar Atlet</h4>
+                            <div class="bg-blue-50 rounded-lg p-4 max-h-48 overflow-y-auto">
+                                <div class="space-y-2">
+                                    ${sport.athleteNames ? sport.athleteNames.map((athlete, index) => `
+                                        <div class="flex items-center space-x-2">
+                                            <span class="bg-blue-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium">${index + 1}</span>
+                                            <span class="text-gray-800">${athlete}</span>
+                                        </div>
+                                    `).join('') : '<div class="text-gray-500 italic">Data atlet belum tersedia</div>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3">🎯 Daftar Pelatih</h4>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="space-y-2">
+                                    ${sport.coachNames ? sport.coachNames.map((coach, index) => `
+                                        <div class="flex items-center space-x-2">
+                                            <span class="bg-green-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium">${index + 1}</span>
+                                            <span class="text-gray-800 font-medium">${coach}</span>
+                                        </div>
+                                    `).join('') : '<div class="text-gray-500 italic">Data pelatih belum tersedia</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Search sports
+        function searchSports() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = sportsData.filter(sport => 
+                sport.name.toLowerCase().includes(searchTerm) ||
+                sport.description.toLowerCase().includes(searchTerm)
+            );
+            renderSportsGrid();
+            updateStatistics();
+        }
+
+        // Reset search
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            filteredData = [...sportsData];
+            renderSportsGrid();
+            updateStatistics();
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const totalSports = filteredData.length;
+            const totalAthletes = filteredData.reduce((sum, sport) => sum + sport.athletes, 0);
+            const totalCoaches = filteredData.reduce((sum, sport) => sum + sport.coaches, 0);
+            const totalAchievements = filteredData.reduce((sum, sport) => sum + sport.achievements.length, 0);
+            
+            document.getElementById('totalSports').textContent = totalSports;
+            document.getElementById('totalAthletes').textContent = totalAthletes;
+            document.getElementById('totalCoaches').textContent = totalCoaches;
+            document.getElementById('totalAchievements').textContent = totalAchievements;
+        }
+
+        // Handle Enter key in search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchSports();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initialize the page
+        init();
+    </script>
+</body>
+</html>
